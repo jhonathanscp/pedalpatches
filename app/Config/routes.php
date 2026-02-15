@@ -13,7 +13,7 @@ return [
         ],
     [
         'method' => 'GET', 
-        'path' => '#^/pedal/([a-zA-Z0-9-])+$#', 
-        'handler' => 'PedalController@show'
+        'path' => '#^/pedals/([\w-]+)$#', 
+        'handler' => 'PedalController@showPedal'
         ]
 ];
