@@ -1,8 +1,9 @@
 <?php
 namespace App\Controllers;
 use App\Models\Pedal;
+use App\Controllers\PagesController;
 
-class PedalController {
+class PedalController extends PagesController {
 
     public function __construct(){
         
@@ -11,7 +12,7 @@ class PedalController {
     public function showPedal($id){
         $model = new Pedal;
         $data = $model->searchPedal($id);
-        
-        var_dump($data);
+
+        $this->view("pedalPage", $data);
     }
 }

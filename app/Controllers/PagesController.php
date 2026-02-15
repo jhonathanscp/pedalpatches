@@ -12,4 +12,9 @@ class PagesController{
         require_once dirname(__DIR__) . "/Views/404.php";
         return;
     }
+    
+    public function view($viewName, $data) {
+        extract($data);
+        require "App/Views/{$viewName}.php";
+    }
 }
