@@ -3,18 +3,31 @@ namespace App\Controllers;
 
 class PagesController{
 
+    private $viewsPath;
+
+    public function __construct() {
+        $this->viewsPath = dirname(__DIR__) . "/Views/";
+    }
+
     public function renderHomePage() {
-        require_once dirname(__DIR__) . "/Views/home.php";
+        require_once $this->viewsPath . "home.php";
         return;
     }
     
     public function render404Page() {
-        require_once dirname(__DIR__) . "/Views/404.php";
+        http_response_code(404);
+        require_once $this->viewsPath . "404.php";
         return;
     }
     
-    public function view($viewName, $data) {
+    public function view($viewFolder, $viewName, $data) {
         extract($data);
-        require "App/Views/{$viewName}.php";
+        $file = $this->viewsPath . "{$viewFolder}/{$viewName}.php";
+
+        if(file_exists($file)){
+            require $file;
+        } else{
+            die("View não encontrada: " . $file);
+        }
     }
 }

@@ -5,14 +5,18 @@ use App\Controllers\PagesController;
 
 class PedalController extends PagesController {
 
+    private $pedalModel;
+
     public function __construct(){
-        
+        parent::__construct();
+
+        $this->pedalModel = new Pedal();
     }
 
     public function showPedal($id){
-        $model = new Pedal;
-        $data = $model->searchPedal($id);
+        
+        $data = $this->pedalModel->searchPedal($id);
 
-        $this->view("pedalPage", $data);
+        $this->view("pedals", "pedalPage", $data);
     }
 }
