@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Controllers;
 
 class PagesController{
@@ -9,12 +11,12 @@ class PagesController{
         $this->viewsPath = dirname(__DIR__) . "/Views/";
     }
 
-    public function renderHomePage() {
+    public function renderHomePage(): void {
         require_once $this->viewsPath . "home.php";
         return;
     }
     
-    public function render404Page() {
+    public function render404Page(): void {
         http_response_code(404);
         require_once $this->viewsPath . "404.php";
         return;

@@ -1,15 +1,16 @@
 <?php
+declare(strict_types=1);
 
 namespace App\Config;
 
 class Router {
-    protected $routes = [];
+    protected array $routes = [];
     
-    public function bringRoutes($definedRoutes) {
+    public function bringRoutes($definedRoutes): void {
         $this->routes = $definedRoutes;
     }
 
-    public function dispatch() {
+    public function dispatch(): void {
         $uri = $_SERVER["REQUEST_URI"];
         $method = $_SERVER["REQUEST_METHOD"];
 

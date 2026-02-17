@@ -1,15 +1,17 @@
 <?php
+declare(strict_types=1);
+
 namespace App\Config;
 
 use PDO;
 use PDOException;
 
 class Database {
-    private $host;
-    private $db_name;
-    private $username;
-    private $password;
-    public $connection;
+    private string $host;
+    private string $db_name;
+    private string $username;
+    private string $password;
+    public PDO|null $connection;
 
     public function __construct(){
         $this->host = $_ENV["DB_HOST"];
@@ -18,7 +20,7 @@ class Database {
         $this->password = $_ENV["DB_PASS"];
     }
 
-    public function getConnection(){
+    public function getConnection(): PDO{
         $this->connection = null;
 
         try {
