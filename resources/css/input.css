@@ -2,3 +2,47 @@
 
 @source "../../App/Views";
 @source "../../index.php";
+
+@theme {
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+}
+
+:root {
+  /* Azul mais claro para dar contraste no preto */
+  --primary: #60a5fa; 
+  --secondary: #a78bfa;
+  
+  /* Fundo preto azulado */
+  --background: #0f172a;
+  /* Fundo de cards um pouco mais claro */
+  --surface: #1e293b;
+  
+  /* Texto branco */
+  --text-main: #f9fafb;
+  --text-muted: #9ca3af;
+}
+
+/* Quando a tag HTML tiver a classe "light", essas variáveis mudam sozinhas */
+.light {
+/* Azul Royal */
+  --primary: #2563eb; 
+  /* Roxo */
+  --secondary: #7c3aed;
+  
+  /* Fundo quase branco */
+  --background: #f3f4f6;
+  /* Fundo de cards/menus (Branco puro) */
+  --surface: #ffffff;
+  
+  /* Texto quase preto */
+  --text-main: #111827;
+  /* Texto cinza para descrições */
+  --text-muted: #6b7280;
+}
