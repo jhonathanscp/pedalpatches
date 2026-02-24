@@ -9,7 +9,7 @@ $dotenv->load();
 
 $router = new Router();
 
-$definedRoutes = require __DIR__ . "/" . "app/Config/routes.php";
+$definedRoutes = require __DIR__ . "/App/Config/routes.php";
 
 $router->bringRoutes($definedRoutes);
 
