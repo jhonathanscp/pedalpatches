@@ -33,6 +33,18 @@ O diferencial deste projeto é sua engenharia: em vez de utilizar frameworks pro
 - **Front-end:** HTML5, Tailwind CSS
 - **Servidor Web:** Apache (WAMPP/Laragon) ou PHP Built-in Server
 
+## 🗄️ Arquitetura do Banco de Dados
+
+O banco de dados do **PedalPatches** foi estruturado para ser relacional, permitindo que os usuários salvem e compartilhem suas configurações de pedais, *Impulse Responses* (IRs) e capturas de amplificadores.
+
+Abaixo está o nosso Diagrama Entidade-Relacionamento (ERD):
+
+![Diagrama do Banco de Dados do PedalPatches](./docs/erd_diagram.png)
+
+* **users**: Armazena os dados de autenticação e perfil.
+* **pedals**: Catálogo base de pedais disponíveis (marca, modelo).
+* **patches / irs / amp_captures**: Entidades centrais onde as configurações customizadas dos usuários são salvas e vinculadas aos equipamentos.
+
 ## 🚀 Como Rodar o Projeto
 
 ### Pré-requisitos
