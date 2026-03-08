@@ -4,26 +4,37 @@ return [
     [
         'method' => 'GET',
         'path' => '#^/$#',
-        'handler' => 'PagesController@renderHomePage'
+        'handler' => 'PagesController@renderHomePage',
+        'auth' => false
     ],
     [
         'method' => 'GET',
         'path' => '#^/home$#',
-        'handler' => 'PagesController@renderHomePage'
+        'handler' => 'PagesController@renderHomePage',
+        'auth' => false
     ],
     [
         'method' => 'GET',
         'path' => '#^/pedals/([\w-]+)$#',
-        'handler' => 'PedalController@showPedal'
+        'handler' => 'PedalController@showPedal',
+        'auth' => false
     ],
     [
         'method' => 'POST',
         'path' => '#^/pedals/new$#',
-        'handler' => 'PedalController@registerNewPedal'
+        'handler' => 'PedalController@registerNewPedal',
+        'auth' => true
     ],
     [
         'method' => 'GET',
-        'path' => '#^/pedals/new$#',
-        'handler' => 'PatchController@renderUploadPatchPage'
+        'path' => '#^/upload$#',
+        'handler' => 'PatchController@renderUploadPatchPage',
+        'auth' => true
+    ],
+    [
+        'method' => 'POST',
+        'path' => '#^/upload$#',
+        'handler' => 'PatchController@uploadNewPatch',
+        'auth' => true
     ]
 ];

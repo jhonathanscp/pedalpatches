@@ -22,8 +22,7 @@ class PagesController{
         return;
     }
     
-    public function view($viewFolder, $viewName, $data) {
-        extract($data);
+    public function view($viewFolder, $viewName, $data = 0) {
         $file = $this->viewsPath . "{$viewFolder}/{$viewName}.php";
 
         if(file_exists($file)){
