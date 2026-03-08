@@ -20,5 +20,10 @@ return [
         'method' => 'POST',
         'path' => '#^/pedals/new$#',
         'handler' => 'PedalController@registerNewPedal'
+    ],
+    [
+        'method' => 'GET',
+        'path' => '#^/pedals/new$#',
+        'handler' => 'PatchController@renderUploadPatchPage'
     ]
 ];

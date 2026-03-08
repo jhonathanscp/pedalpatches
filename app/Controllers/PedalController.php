@@ -18,11 +18,11 @@ class PedalController extends PagesController
         $this->pedalModel = new Pedal();
     }
 
-    public function showPedal(string|int $id): void
+    public function showPedal(string|int $slug): void
     {
-        $data = $this->pedalModel->searchPedal($id);
-
-        if (isset($data)) {
+        $data = $this->pedalModel->searchPedal($slug);
+        
+        if ($data) {
             $this->view("pedals", "pedalPage", $data);
         }
         else {

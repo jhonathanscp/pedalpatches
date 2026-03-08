@@ -1,6 +1,5 @@
 <?php
-declare(strict_types = 1)
-;
+declare(strict_types = 1);
 
 namespace App\Models;
 use App\Config\Database;
@@ -16,13 +15,13 @@ class Pedal
         $this->connection = $db->getConnection();
     }
 
-    public function searchPedal(string|int $id): array
+    public function searchPedal(string|int $slug)
     {
-        $sql = "SELECT * FROM pedals WHERE id = :id";
+        $sql = "SELECT * FROM pedals WHERE slug = :slug";
 
         $stmt = $this->connection->prepare($sql);
 
-        $stmt->bindValue(":id", $id);
+        $stmt->bindValue(":slug", $slug);
 
         $stmt->execute();
 
@@ -42,7 +41,5 @@ class Pedal
 
         $stmt->execute();
     }
-
-
 
 }

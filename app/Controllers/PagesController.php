@@ -18,7 +18,7 @@ class PagesController{
     
     public function render404Page(): void {
         http_response_code(404);
-        require_once $this->viewsPath . "404.php";
+        require_once $this->viewsPath . "errors/404.php";
         return;
     }
     

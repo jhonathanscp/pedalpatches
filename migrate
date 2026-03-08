@@ -1,0 +1,52 @@
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . "/vendor/autoload.php";
+
+use App\Config\Database;
+use Dotenv\Dotenv;
+
+echo "------------------------------------------\n";
+echo "    🎸 PEDAL PATCHES - MIGRATION SYSTEM   \n";
+echo "------------------------------------------\n";
+
+// Verificando se é preciso dropar as tabelas para migrar
+$fresh = false;
+if (in_array('fresh', $argv)) {
+  $fresh = true;
+}
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+$db = new Database();
+$connection = $db->getConnection();
+
+try {
+  migrate($connection, $fresh);
+} catch (PDOException $exception) {
+  echo "\033[31m ✘ Erro ao migrar banco de dados: \033[0m" . PHP_EOL . $exception;
+}
+
+function migrate(mixed $connection, bool $fresh)
+{
+  // Trazendo o arquivo SQL com as tabelas para o PHP
+  $migration = explode(";", file_get_contents("App/Config/db.sql"));
+  preg_match_all("#CREATE\s+TABLE\s+([a-zA-Z0-9_-]+)#i", file_get_contents("App/Config/db.sql"), $tables);
+  $tables = $tables[1];
+
+  if ($fresh) {
+    foreach ($tables as $table) {
+      $statement = $connection->prepare("DROP TABLE IF EXISTS $table");
+      echo $statement->execute() ? "✔ Tabela excluída com sucesso: $table". PHP_EOL : "✘ Erro ao excluir tabela: " . $connection->errorInfo();
+    }
+  }  
+
+    foreach ($tables as $index => $table) {
+    $statement = $connection->prepare($migration[$index]);
+
+    echo $statement->execute() ? "✔ Tabela criada com sucesso: $table". PHP_EOL : "✘ Erro ao criar tabela: " . $connection->errorInfo();
+      
+    }
+}
