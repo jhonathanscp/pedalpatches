@@ -1,0 +1,122 @@
+<?php
+
+declare(strict_types=1);
+
+require __DIR__ . "/vendor/autoload.php";
+
+use App\Config\Database;
+use Dotenv\Dotenv;
+
+echo "------------------------------------------\n";
+echo "           ALERION - CLI SYSTEM           \n";
+echo "------------------------------------------\n";
+
+$dotenv = Dotenv::createImmutable(__DIR__);
+$dotenv->load();
+
+switch ($argv[1]) {
+  case 'migrate':
+    logMessage("info", "Migração do banco de dados iniciada");
+    $fresh = false;
+    if (isset($argv[2])) {
+      switch ($argv[2]) {
+      case '--fresh':
+        $fresh = true;
+        break;
+      
+      default:
+
+        break;
+      }
+    }
+    
+    migrate($fresh);
+    
+    break;
+
+  case 'host':
+
+    break;
+  default:
+    
+    break;
+}
+
+
+// migrate do banco de dados
+function migrate(bool $fresh)
+{
+  // Trazendo o arquivo SQL com as tabelas para o PHP
+  $migration = explode(";", file_get_contents("App/Config/db.sql"));
+  preg_match_all("#CREATE\s+TABLE\s+([a-zA-Z0-9_-]+)#i", file_get_contents("App/Config/db.sql"), $tables);
+  $tables = $tables[1];
+
+  try{
+    $db = new Database();
+    $connection = $db->getConnection();
+  } catch(PDOException $exception){
+    logMessage("error", "Erro na conexão do banco de dados: " . PHP_EOL . $exception);
+  }
+  
+
+  if ($fresh) {
+    try {
+      foreach ($tables as $table) {
+      $statement = $connection->prepare("DROP TABLE IF EXISTS $table");
+      echo $statement->execute() ? logMessage("success", "Tabela excluída com sucesso: $table"): logMessage("error", "Erro ao excluir tabela $table " . $connection->errorInfo());
+    }
+    } catch (PDOException $exception) {
+      logMessage("error", "Erro ao excluir tabelas: " . PHP_EOL . $exception);
+    }
+  }
+
+  try {
+    foreach ($tables as $index => $table) {
+    $statement = $connection->prepare($migration[$index]);
+    echo $statement->execute() ? logMessage("success", "Tabela criada com sucesso: $table") : logMessage("error", "Erro ao criar tabela $table ". $connection->errorInfo());
+  }
+  } catch (PDOException $exception) {
+    logMessage("error", "Erro ao criar tabelas: " . PHP_EOL . $exception);
+  }
+}
+
+// Função para hostear um server single thread no PHP
+function host(){
+    
+}
+
+// Função com padrões de log
+function logMessage($type, $message) {
+    // Cores ANSI
+    $green  = "\033[32m";
+    $red    = "\033[31m";
+    $blue   = "\033[34m";
+    $yellow = "\033[33m";
+    $bold   = "\033[1m";
+    $reset  = "\033[0m";
+
+    $date = date('H:i:s');
+    
+    // Escolhe o ícone e a cor baseada no tipo
+    switch ($type) {
+        case 'success':
+            $status = "{$green}DONE{$reset}";
+            $icon = "✔";
+            break;
+        case 'error':
+            $status = "{$red}FAIL{$reset}";
+            $icon = "✘";
+            break;
+        case 'info':
+            $status = "{$blue}INFO{$reset}";
+            $icon = "ℹ";
+            break;
+        case 'warning':
+            $status = "{$yellow}DROP{$reset}";
+            $icon = "⚠";
+            break;
+    }
+
+    // Formatação: [HORA] STATUS - MENSAGEM
+    printf("[%s] %-15s %s %s\n", $date, $status, $icon, $message);
+}
