@@ -20,25 +20,32 @@ switch ($argv[1]) {
     $fresh = false;
     if (isset($argv[2])) {
       switch ($argv[2]) {
-      case '--fresh':
-        $fresh = true;
-        break;
-      
-      default:
+        case '--fresh':
+          $fresh = true;
+          break;
 
-        break;
+        default:
+
+          break;
       }
     }
-    
+
     migrate($fresh);
-    
+
     break;
 
   case 'host':
+    host();
+    break;
 
+  case '-h':
+  case '--help':
+    showHelp();
     break;
   default:
-    
+    logMessage("error", "Comando não reconhecido: " . $argv[1]);
+    logMessage("info", "Use -h ou --help para ver os comandos disponíveis.");
+    return;
     break;
 }
 
@@ -51,20 +58,20 @@ function migrate(bool $fresh)
   preg_match_all("#CREATE\s+TABLE\s+([a-zA-Z0-9_-]+)#i", file_get_contents("App/Config/db.sql"), $tables);
   $tables = $tables[1];
 
-  try{
+  try {
     $db = new Database();
     $connection = $db->getConnection();
-  } catch(PDOException $exception){
+  } catch (PDOException $exception) {
     logMessage("error", "Erro na conexão do banco de dados: " . PHP_EOL . $exception);
   }
-  
+
 
   if ($fresh) {
     try {
       foreach ($tables as $table) {
-      $statement = $connection->prepare("DROP TABLE IF EXISTS $table");
-      echo $statement->execute() ? logMessage("success", "Tabela excluída com sucesso: $table"): logMessage("error", "Erro ao excluir tabela $table " . $connection->errorInfo());
-    }
+        $statement = $connection->prepare("DROP TABLE IF EXISTS $table");
+        echo $statement->execute() ? logMessage("success", "Tabela excluída com sucesso: $table") : logMessage("error", "Erro ao excluir tabela $table " . $connection->errorInfo());
+      }
     } catch (PDOException $exception) {
       logMessage("error", "Erro ao excluir tabelas: " . PHP_EOL . $exception);
     }
@@ -72,51 +79,73 @@ function migrate(bool $fresh)
 
   try {
     foreach ($tables as $index => $table) {
-    $statement = $connection->prepare($migration[$index]);
-    echo $statement->execute() ? logMessage("success", "Tabela criada com sucesso: $table") : logMessage("error", "Erro ao criar tabela $table ". $connection->errorInfo());
-  }
+      $statement = $connection->prepare($migration[$index]);
+      echo $statement->execute() ? logMessage("success", "Tabela criada com sucesso: $table") : logMessage("error", "Erro ao criar tabela $table " . $connection->errorInfo());
+    }
   } catch (PDOException $exception) {
     logMessage("error", "Erro ao criar tabelas: " . PHP_EOL . $exception);
   }
 }
 
 // Função para hostear um server single thread no PHP
-function host(){
-    
+function host()
+{
+  $localhost = $_ENV['HOST'] ?? 'localhost';
+  $port = $_ENV['PORT'] ?? 8080;
+
+  $command = sprintf("php -S %s:%d", $localhost, $port);
+  logMessage("info", "Servidor iniciado em http://$localhost:$port");
+  passthru($command);
+}
+
+// Função para exibir lista de comandos disponíveis
+function showHelp()
+{
+  $disponibleCommands = [
+    'migrate [--fresh]' => 'Migra o banco de dados. Use --fresh para excluir as tabelas antes de criar novas.',
+    'host' => 'Inicia um servidor local usando o PHP built-in server.',
+    '-h, --help' => 'Exibe esta mensagem de ajuda.'
+  ];
+
+  logMessage("info", "Comandos disponíveis:");
+  foreach ($disponibleCommands as $command => $description) {
+    echo "  $command  - $description\n";
+  }
 }
 
 // Função com padrões de log
-function logMessage($type, $message) {
-    // Cores ANSI
-    $green  = "\033[32m";
-    $red    = "\033[31m";
-    $blue   = "\033[34m";
-    $yellow = "\033[33m";
-    $bold   = "\033[1m";
-    $reset  = "\033[0m";
+function logMessage($type, $message)
+{
+  // Cores ANSI
+  $green  = "\033[32m";
+  $red    = "\033[31m";
+  $blue   = "\033[34m";
+  $yellow = "\033[33m";
+  $bold   = "\033[1m";
+  $reset  = "\033[0m";
 
-    $date = date('H:i:s');
-    
-    // Escolhe o ícone e a cor baseada no tipo
-    switch ($type) {
-        case 'success':
-            $status = "{$green}DONE{$reset}";
-            $icon = "✔";
-            break;
-        case 'error':
-            $status = "{$red}FAIL{$reset}";
-            $icon = "✘";
-            break;
-        case 'info':
-            $status = "{$blue}INFO{$reset}";
-            $icon = "ℹ";
-            break;
-        case 'warning':
-            $status = "{$yellow}DROP{$reset}";
-            $icon = "⚠";
-            break;
-    }
+  $date = date('H:i:s');
 
-    // Formatação: [HORA] STATUS - MENSAGEM
-    printf("[%s] %-15s %s %s\n", $date, $status, $icon, $message);
+  // Escolhe o ícone e a cor baseada no tipo
+  switch ($type) {
+    case 'success':
+      $status = "{$green}DONE{$reset}";
+      $icon = "✔";
+      break;
+    case 'error':
+      $status = "{$red}FAIL{$reset}";
+      $icon = "✘";
+      break;
+    case 'info':
+      $status = "{$blue}INFO{$reset}";
+      $icon = "ℹ";
+      break;
+    case 'warning':
+      $status = "{$yellow}DROP{$reset}";
+      $icon = "⚠";
+      break;
+  }
+
+  // Formatação: [HORA] STATUS - MENSAGEM
+  printf("[%s] %-15s %s %s\n", $date, $status, $icon, $message);
 }
