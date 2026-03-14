@@ -36,5 +36,23 @@ return [
         'path' => '#^/upload$#',
         'handler' => 'PatchController@uploadNewPatch',
         'auth' => true
+    ],
+    [
+        'method' => 'GET',
+        'path' => '#^/authenticate$#',
+        'handler' => 'AuthController@renderAuthPage',
+        'auth' => false
+    ],
+    [
+        'method' => 'POST',
+        'path' => '#^/authenticate$#',
+        'handler' => 'AuthController@register',
+        'auth' => true
+    ],
+    [
+        'method' => 'POST',
+        'path' => '#^/authenticate$#',
+        'handler' => 'AuthController@login',
+        'auth' => true
     ]
 ];

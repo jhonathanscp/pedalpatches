@@ -1,8 +1,11 @@
 <?php
 require __DIR__ . '/vendor/autoload.php';
+require __DIR__ . '/app/helpers.php';
 
 use App\Config\Router;
 use Dotenv\Dotenv;
+
+session_start();
 
 $dotenv = Dotenv::createImmutable(__DIR__);
 $dotenv->load();

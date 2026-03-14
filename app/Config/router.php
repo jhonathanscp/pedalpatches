@@ -20,6 +20,13 @@ class Router {
             }
 
             if(preg_match($route["path"], $uri, $matches)) {
+                if(isset($route["auth"]) && $route["auth"] === true) {
+                    if(!isset($_SESSION["user"])) {
+                        header("Location: /authenticate");
+                        exit();
+                    }
+                }
+    
                 array_shift($matches);
             
                 $controller = explode("@", $route["handler"])[0];

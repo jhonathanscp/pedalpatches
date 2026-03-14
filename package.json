@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "style": "npx @tailwindcss/cli -i ./resources/css/input.css -o ./public/css/style.css --watch",
-    "build": "npx @tailwindcss/cli -i ./resources/css/input.css -o ./public/css/style.css --minify"
+    "build": "npx @tailwindcss/cli -i ./resources/css/input.css -o ./public/css/style.css --minify",
+    "watch": "browser-sync start --proxy \"localhost:8080\" --files \"** /*.php, **/*.css, ** /*.js, **/*.html\""
   },
   "repository": {
     "type": "git",

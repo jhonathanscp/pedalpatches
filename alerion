@@ -35,7 +35,11 @@ switch ($argv[1]) {
     break;
 
   case 'host':
-    host();
+    if (isset($argv[2]) && $argv[2] === "--watch") {
+      host(true);
+    } else {
+      host(false);
+    }
     break;
 
   case '-h':
@@ -88,14 +92,34 @@ function migrate(bool $fresh)
 }
 
 // Função para hostear um server single thread no PHP
-function host()
+function host($watch)
 {
-  $localhost = $_ENV['HOST'] ?? 'localhost';
+  $host = $_ENV['HOST'] ?? 'localhost';
   $port = $_ENV['PORT'] ?? 8080;
 
-  $command = sprintf("php -S %s:%d", $localhost, $port);
-  logMessage("info", "Servidor iniciado em http://$localhost:$port");
-  passthru($command);
+  logMessage("info", "Iniciando servidor de desenvolvimento...");
+
+  if ($watch) {
+    $watchCommand = sprintf("browser-sync start --proxy \"%s:%s\" --files \"**/*.php, **/*.css, **/*.js, **/*.html\"", $host, $port);
+
+    $os = strtoupper(substr(PHP_OS, 0, 3));
+    if ($os == "WIN") {
+      $command = sprintf('start "" /b php -S %s:%s > NUL 2>&1', $host, $port);
+      pclose(popen($command, 'r'));
+    } else {
+      $command = sprintf("php -S %s:%s > /dev/null 2>&1 &", $host, $port);
+      exec($command);
+    }
+  }
+
+  logMessage("info", "Pressione [Ctrl + C] para encerrar.");
+
+  if (isset($watchCommand)) {
+    logMessage("info", "Inciando BrowserSync (Live Reload)...");
+    passthru($watchCommand);
+  } else {
+    passthru("php -S $host:$port");
+  }
 }
 
 // Função para exibir lista de comandos disponíveis
@@ -103,7 +127,7 @@ function showHelp()
 {
   $disponibleCommands = [
     'migrate [--fresh]' => 'Migra o banco de dados. Use --fresh para excluir as tabelas antes de criar novas.',
-    'host' => 'Inicia um servidor local usando o PHP built-in server.',
+    'host [--watch]' => 'Inicia um servidor local usando o PHP built-in server. User --watch para ativar o LiveReload',
     '-h, --help' => 'Exibe esta mensagem de ajuda.'
   ];
 
